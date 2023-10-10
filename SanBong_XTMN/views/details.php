@@ -125,128 +125,126 @@
                     } else {
                         // Nếu người dùng chưa đăng nhập, chuyển hướng tới trang đăng nhập
                         echo "<a href='log_in.php'><button>Đặt sân</button></a>";
-                    }
-                    
+                    }                    
                     echo "<button id='exit-booking-form'>Hủy đặt</button>";
                 echo "</div>";   
                 ?>
                 <div class="booking-form-container">
-                <div class="thongTinDatSan">
-        <!-- Form để nhập dữ liệu -->
-        <form method="post" action="thanhtoan.php">
-            <h4>Thông Tin Đặt Sân</h4>
-            <b for="tenSanCon"> Sân bóng:</b>
-            <select name="tenSanCon" id="tenSanCon">
-                <?php
-                // Truy vấn dữ liệu từ bảng SanCon để hiển thị trong combobox
-                $sql = "SELECT * FROM SanCon where IDsanBong=$id";
-                $result = $conn->query($sql);
+                    <div class="thongTinDatSan">
+                        <!-- Form để nhập dữ liệu -->
+                        <form method="post" action="thanhtoan.php">
+                            <h4>Thông Tin Đặt Sân</h4>
+                            <b for="tenSanCon"> Sân bóng:</b>
+                            <select name="tenSanCon" id="tenSanCon">
+                                <?php
+                                // Truy vấn dữ liệu từ bảng SanCon để hiển thị trong combobox
+                                $sql = "SELECT * FROM SanCon where IDsanBong=$id";
+                                $result = $conn->query($sql);
 
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<option value='" . $row["tenSanCon"] . "'>" . $row["tenSanCon"] . "</option>";
-                    }
-                } else {
-                    echo "Không có dữ liệu sân bóng.";
-                }
-                ?>
-            </select>
-            <b for="gioDatSan"> Giờ bắt đầu:</b>
-            <input type="text" name="gioDatSan" id="gioDatSan">
-            <b for="numberInput"> Số giờ thê:</b>
-            <input type="number" id="numberInput" name="numberInput" min="1">
-            <input type="button" value="Thêm" id="them-button">
-        </form>
-    </div>
-    <!-- Bảng Dữ liệu -->
-    <table border="1" id="du-lieu-table">
-        <tr>
-            <th>Sân bóng</th>
-            <th>Giờ bắt đầu</th>
-            <th>Số giờ thê</th>
-            <th>Chỉnh sửa</th>
-        </tr>
-    </table>
-    <div class="xacNhanDatSan">
-        <!-- Nút để chuyển dữ liệu sang trang thanhtoan.php -->
-        <form method="post" action="thanhtoan.php">
-            <input type="hidden" name="duLieuBang" id="duLieuBangInput">
-            <button type="submit" id="xacNhanDatSan">Đặt Sân</button>
-        </form>
-    </div>
-    <script>
-        // ...
-var xacNhanDatSanButton = document.getElementById("xacNhanDatSan");
-
-// Sự kiện khi nhấn nút "Đặt Sân"
-xacNhanDatSanButton.addEventListener("click", function() {
-    // Chuyển dữ liệu từ bảng sang trường ẩn
-    var duLieuBangInput = document.getElementById("duLieuBangInput");
-    duLieuBangInput.value = JSON.stringify(du_lieu);
-});
-
-    </script>
-    
-    <script>
-    // Khởi tạo một mảng để lưu trữ dữ liệu
-    var du_lieu = [];
-
-    // Lấy các phần tử DOM
-    var tenSanConInput = document.getElementById("tenSanCon");
-    var gioDatSan = document.getElementById("gioDatSan");
-    var numberInput = document.getElementById("numberInput");
-    var themButton = document.getElementById("them-button");
-    var duLieuTable = document.getElementById("du-lieu-table");
-
-    // Sự kiện khi nhấn nút "Thêm"
-    themButton.addEventListener("click", function() {
-        var tenSanCon = tenSanConInput.value;
-        var gioDat = gioDatSan.value;
-        var soGio = numberInput.value;
-
-        // Kiểm tra nếu giờ bắt đầu và số giờ thê không trống
-        if (gioDat.trim() !== "" && soGio.trim() !== "") {
-            du_lieu.push({ "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Số giờ": soGio });
-            capNhatBang();
-            tenSanConInput.value = "";
-            gioDatSan.value = "";
-            numberInput.value = "";
-        } else {
-            alert("Vui lòng nhập giờ bắt đầu và số giờ thê.");
-        }
-    });
-
-    // Hàm cập nhật bảng
-    function capNhatBang() {
-        while (duLieuTable.rows.length > 1) {
-            duLieuTable.deleteRow(1);
-        }
-        du_lieu.forEach(function(row, index) {
-            var newRow = duLieuTable.insertRow(-1);
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            var cell3 = newRow.insertCell(2);
-            var cell4 = newRow.insertCell(3);
-            cell1.innerHTML = row["Sân bóng"];
-            cell2.innerHTML = row["Giờ bắt đầu"];
-            cell3.innerHTML = row["Số giờ"];
-            cell4.innerHTML = '<button onclick="chinhSuaHang(' + index + ')">Chỉnh sửa</button>';
-        });
-    }
-
-    // Hàm chỉnh sửa hàng
-    function chinhSuaHang(index) {
-        tenSanConInput.value = du_lieu[index]["Sân bóng"];
-        gioDatSan.value = du_lieu[index]["Giờ bắt đầu"];
-        numberInput.value = du_lieu[index]["Số giờ"];
-
-        // Xóa hàng sau khi chọn để chỉnh sửa
-        du_lieu.splice(index, 1);
-        capNhatBang();
-    }
-</script>
-
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<option value='" . $row["tenSanCon"] . "'>" . $row["tenSanCon"] . "</option>";
+                                    }
+                                } else {
+                                    echo "Không có dữ liệu sân bóng.";
+                                }
+                                ?>
+                            </select>
+                            <b for="gioDatSan"> Giờ bắt đầu:</b>
+                            <input type="text" name="gioDatSan" id="gioDatSan">
+                            <b for="numberInput"> Số giờ thê:</b>
+                            <input type="number" id="numberInput" name="numberInput" min="1">
+                            <input type="button" value="Thêm" id="them-button">
+                        </form>
                     </div>
+                    <!-- Bảng Dữ liệu -->
+                    <table border="1" id="du-lieu-table">
+                        <tr>
+                            <th>Sân bóng</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Số giờ thê</th>
+                            <th>Chỉnh sửa</th>
+                        </tr>
+                    </table>
+                    <div class="xacNhanDatSan">
+                        <!-- Nút để chuyển dữ liệu sang trang thanhtoan.php -->
+                        <form method="post" action="thanhtoan.php">
+                            <input type="hidden" name="duLieuBang" id="duLieuBangInput">
+                            <button type="submit" id="xacNhanDatSan">Đặt Sân</button>
+                        </form>
+                    </div>
+                    <script>
+                        // ...
+                        var xacNhanDatSanButton = document.getElementById("xacNhanDatSan");
+
+                        // Sự kiện khi nhấn nút "Đặt Sân"
+                        xacNhanDatSanButton.addEventListener("click", function() {
+                            // Chuyển dữ liệu từ bảng sang trường ẩn
+                            var duLieuBangInput = document.getElementById("duLieuBangInput");
+                            duLieuBangInput.value = JSON.stringify(du_lieu);
+                        });
+                    </script>
+    
+                    <script>
+                    // Khởi tạo một mảng để lưu trữ dữ liệu
+                    var du_lieu = [];
+
+                    // Lấy các phần tử DOM
+                    var tenSanConInput = document.getElementById("tenSanCon");
+                    var gioDatSan = document.getElementById("gioDatSan");
+                    var numberInput = document.getElementById("numberInput");
+                    var themButton = document.getElementById("them-button");
+                    var duLieuTable = document.getElementById("du-lieu-table");
+
+                    // Sự kiện khi nhấn nút "Thêm"
+                    themButton.addEventListener("click", function() {
+                        var tenSanCon = tenSanConInput.value;
+                        var gioDat = gioDatSan.value;
+                        var soGio = numberInput.value;
+
+                        // Kiểm tra nếu giờ bắt đầu và số giờ thê không trống
+                        if (gioDat.trim() !== "" && soGio.trim() !== "") {
+                            du_lieu.push({ "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Số giờ": soGio });
+                            capNhatBang();
+                            tenSanConInput.value = "";
+                            gioDatSan.value = "";
+                            numberInput.value = "";
+                        } else {
+                            alert("Vui lòng nhập giờ bắt đầu và số giờ thê.");
+                        }
+                    });
+
+                    // Hàm cập nhật bảng
+                    function capNhatBang() {
+                        while (duLieuTable.rows.length > 1) {
+                            duLieuTable.deleteRow(1);
+                        }
+                        du_lieu.forEach(function(row, index) {
+                            var newRow = duLieuTable.insertRow(-1);
+                            var cell1 = newRow.insertCell(0);
+                            var cell2 = newRow.insertCell(1);
+                            var cell3 = newRow.insertCell(2);
+                            var cell4 = newRow.insertCell(3);
+                            cell1.innerHTML = row["Sân bóng"];
+                            cell2.innerHTML = row["Giờ bắt đầu"];
+                            cell3.innerHTML = row["Số giờ"];
+                            cell4.innerHTML = '<button onclick="chinhSuaHang(' + index + ')">Chỉnh sửa</button>';
+                        });
+                    }
+
+                    // Hàm chỉnh sửa hàng
+                    function chinhSuaHang(index) {
+                        tenSanConInput.value = du_lieu[index]["Sân bóng"];
+                        gioDatSan.value = du_lieu[index]["Giờ bắt đầu"];
+                        numberInput.value = du_lieu[index]["Số giờ"];
+
+                        // Xóa hàng sau khi chọn để chỉnh sửa
+                        du_lieu.splice(index, 1);
+                        capNhatBang();
+                    }
+                </script>
+
+                </div>
                 <script>
                     // Lấy phần tử DOM của form đặt sân
                     var bookingForm = document.querySelector(".booking-form-container");
@@ -430,7 +428,6 @@ xacNhanDatSanButton.addEventListener("click", function() {
             echo "ID không hợp lệ.";
         }
         ?>
-
     </main>
     
     <footer>
