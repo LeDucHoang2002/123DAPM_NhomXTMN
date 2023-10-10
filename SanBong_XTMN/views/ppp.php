@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chọn Giờ</title>
+    <title>Giao diện đặt sân</title>
+    <style>
+        .booking-form-container {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <label for="gio1">Chọn giờ thứ nhất:</label>
-    <input type="time" id="gio1" name="gio1">
+    <h1>Giao diện đặt sân</h1>
 
-    <label for="gio2">Chọn giờ thứ hai:</label>
-    <input type="time" id="gio2" name="gio2">
+    <!-- Nút để hiển thị form đặt sân -->
+    <button id="show-booking-form">Đặt sân</button>
 
-    <p id="error-message" style="color: red;"></p>
+    <!-- Form đặt sân -->
+    <div class="booking-form-container">
+        <!-- Đây là nội dung của form đặt sân -->
+        <form method="post" action="#">
+            <!-- Thêm các trường nhập liệu và nút để đặt sân ở đây -->
+            <label for="ten">Tên:</label>
+            <input type="text" name="ten" id="ten">
+            <label for="ngay">Ngày:</label>
+            <input type="text" name="ngay" id="ngay">
+            <label for="gio">Giờ:</label>
+            <input type="text" name="gio" id="gio">
+            <button type="submit">Xác nhận đặt sân</button>
+        </form>
+    </div>
 
     <script>
-        // Lấy các phần tử input
-        var gio1Input = document.getElementById("gio1");
-        var gio2Input = document.getElementById("gio2");
-        var errorMessage = document.getElementById("error-message");
+        // Lấy phần tử DOM của form đặt sân
+        var bookingForm = document.querySelector(".booking-form-container");
 
-        // Thêm sự kiện người dùng thay đổi giờ
-        gio1Input.addEventListener("change", validateTime);
-        gio2Input.addEventListener("change", validateTime);
+        // Lấy phần tử DOM của nút "Đặt sân"
+        var showBookingButton = document.getElementById("show-booking-form");
 
-        function validateTime() {
-            var gio1Value = gio1Input.value;
-            var gio2Value = gio2Input.value;
-
-            // Chuyển đổi chuỗi giờ thành đối tượng Date
-            var gio1Date = new Date("1970-01-01T" + gio1Value);
-            var gio2Date = new Date("1970-01-01T" + gio2Value);
-
-            // So sánh giờ
-            if (gio1Date >= gio2Date) {
-                errorMessage.textContent = "Giờ thứ hai phải lớn hơn giờ thứ nhất.";
-                gio2Input.value = "";
-            } else {
-                errorMessage.textContent = "";
-            }
-        }
+        // Thêm sự kiện click cho nút "Đặt sân"
+        showBookingButton.addEventListener("click", function() {
+            // Hiển thị form đặt sân khi nhấn nút "Đặt sân"
+            bookingForm.style.display = "block";
+        });
     </script>
 </body>
 </html>

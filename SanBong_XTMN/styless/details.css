@@ -65,10 +65,48 @@ a {
     color: #000000; /* Màu văn bản */
 }
 
+.thongTinDatSan{
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+#tenSanCon,#gioDatSan,#numberInput{
+    width: 100px;
+}
+#du-lieu-table,.xacNhanDatSan{
+    margin-left: 10%;
+}
+.xacNhanDatSan{
+    margin-top: 10px;
+    width: 150px;
+}
+#xacNhanDatSan{
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+    background-color: #ff0000;
+    color: #ffffff;   
+    border: none;
+    cursor: pointer;
+}
 
+#xacNhanDatSan:hover{
+    border: 2px solid rgb(239, 11, 114);    
+    background-color: #ffffff; /* Thay đổi màu nền khi hover */
+    color: rgb(239, 11, 114); /* Thay đổi màu chữ khi hover */
+}
 .booking-form-container{
-    border: #000000;
     color: #ce1717;
+    display:none;
+    margin-left: 7%;
+    margin-right: 7%;
+}
+#show-booking-form{
+display: block;
+}
+#exit-booking-form{
+    
+    display:none;
 }
 /* Thêm CSS cho bố trí dữ liệu */
 .sanbong-info {
@@ -155,19 +193,20 @@ a {
 }
 /* CSS cho hình ảnh sân con */
 .sancon-info #img_sancon {
-    max-width: 200px;
-    height: 200px;
+    max-width: 150px;
+    height: 150px;
 }
 .sancon-info-button{
+    margin-top: 20px;
     width: 170px;
-    
+    margin-left: 7%;
 }
 .sancon-info-button button{
     width: 100%;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    padding: 7px;
+    padding: 4px;
     border: none;
     background-color: #ff0000;
     color: #ffffff;
