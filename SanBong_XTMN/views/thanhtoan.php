@@ -59,12 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ví dụ: Hiển thị thông tin từ bảng
     echo "<h4>Thông Tin Đặt Sân</h4>";
     echo "<table border='1'>";
-    echo "<tr><th>Sân bóng</th><th>Giờ bắt đầu</th><th>Số giờ thuê</th></tr>";
+    echo "<tr><th>Ngày đặt</th><th>Sân bóng</th><th>Giờ bắt đầu</th><th>Giờ kết thúc</th></tr>";
     foreach ($duLieuMang as $hang) {
         echo "<tr>";
+        echo "<td>" . $hang["Ngày đặt"] . "</td>";
         echo "<td>" . $hang["Sân bóng"] . "</td>";
         echo "<td>" . $hang["Giờ bắt đầu"] . "</td>";
-        echo "<td>" . $hang["Số giờ"] . "</td>";
+        echo "<td>" . $hang["Giờ kết thúc"] . "</td>";
         echo "</tr>";
     }
     echo "</table>";

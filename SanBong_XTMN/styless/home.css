@@ -216,7 +216,10 @@ select {
     height: 200px;
     border-radius: 20px 20px 0 0;
 }
-
+#img_saoSanBong{
+    width: 20px;
+    height: 20px;
+}
 /* Đặt lại kiểu cho data_stadium */
 .data_stadium {
     padding: 10px; /* Thêm khoảng cách giữa các mục trong data_stadium */

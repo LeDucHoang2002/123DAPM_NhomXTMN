@@ -134,6 +134,8 @@
                         <!-- Form để nhập dữ liệu -->
                         <form method="post" action="thanhtoan.php">
                             <h4>Thông Tin Đặt Sân</h4>
+                            <b for="gioDatSan"> Ngày đặt sân:</b>
+                            <input type="date" id="ngayChon" min="<?php echo date('Y-m-d'); ?>">
                             <b for="tenSanCon"> Sân bóng:</b>
                             <select name="tenSanCon" id="tenSanCon">
                                 <?php
@@ -151,18 +153,19 @@
                                 ?>
                             </select>
                             <b for="gioDatSan"> Giờ bắt đầu:</b>
-                            <input type="text" name="gioDatSan" id="gioDatSan">
-                            <b for="numberInput"> Số giờ thê:</b>
-                            <input type="number" id="numberInput" name="numberInput" min="1">
+                            <input type="text" name="gioDatSan" id="gioDatSan" placeholder="Nhập kiểu 08:00">
+                            <b for="gioKetThuc"> Giờ kết thúc:</b>
+                            <input type="text" id="gioKetThuc" name="gioKetThuc" placeholder="Nhập kiểu 08:00">
                             <input type="button" value="Thêm" id="them-button">
                         </form>
                     </div>
+                    
                     <!-- Bảng Dữ liệu -->
                     <table border="1" id="du-lieu-table">
-                        <tr>
+                        <tr><th>Ngay đặt</th>
                             <th>Sân bóng</th>
                             <th>Giờ bắt đầu</th>
-                            <th>Số giờ thê</th>
+                            <th>Giờ kết thúc</th>
                             <th>Chỉnh sửa</th>
                         </tr>
                     </table>
@@ -189,29 +192,79 @@
                     // Khởi tạo một mảng để lưu trữ dữ liệu
                     var du_lieu = [];
 
-                    // Lấy các phần tử DOM
+                    // Lấy các phần tử DOM 
+
+                    var ngayChonInput = document.getElementById("ngayChon");
                     var tenSanConInput = document.getElementById("tenSanCon");
                     var gioDatSan = document.getElementById("gioDatSan");
-                    var numberInput = document.getElementById("numberInput");
+                    var gioKetThuc = document.getElementById("gioKetThuc");
                     var themButton = document.getElementById("them-button");
                     var duLieuTable = document.getElementById("du-lieu-table");
 
                     // Sự kiện khi nhấn nút "Thêm"
                     themButton.addEventListener("click", function() {
+                        var ngayChon = ngayChonInput.value;
                         var tenSanCon = tenSanConInput.value;
                         var gioDat = gioDatSan.value;
-                        var soGio = numberInput.value;
+                        var gioXong = gioKetThuc.value;
+                        
+                    // Chuyển đổi số giờ thành chuỗi kiểu giờ 24 giờ
+                    var gioDat24 = gioDat.toString().padStart(2, '0') + ":00";
+                    var gioXong24 = gioXong.toString().padStart(2, '0') + ":00";
+                        <?php
+                        
+                        // Truy vấn dữ liệu từ bảng SanBong để hiển thị trong combobox
+                        $sql = "SELECT * FROM SanBong where IDsanBong=$id";
+                        $result = $conn->query($sql);
 
-                        // Kiểm tra nếu giờ bắt đầu và số giờ thê không trống
-                        if (gioDat.trim() !== "" && soGio.trim() !== "") {
-                            du_lieu.push({ "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Số giờ": soGio });
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            $gioMoCua = $row["thoiGianMoCua"];
+                            $gioDongCua = $row["thoiGianDongCua"];
+                            echo "var gioMoCua = '" . $gioMoCua . "';";
+                            echo "var gioDongCua = '" . $gioDongCua . "';";
+                        } 
+                        $sqlCheckReservation = "SELECT chitietdatsan.* FROM chitietdatsan
+                                    JOIN sancon ON chitietdatsan.IDsanCon = sancon.IDsanCon
+                                    JOIN sanbong ON sancon.IDsanBong = sanbong.IDsanBong
+                                    WHERE sanbong.IDsanBong = $id
+                                    AND sancon.tenSanCon='Sân Số 1'
+                                    AND (
+                                    (gioBatDau < '08;00' AND '08:00' < gioKetThuc)
+                                    OR (gioBatDau < '10:00' AND '10:00' < gioKetThuc)
+                                    )";
+                                
+                                $resultCheckReservation = $conn->query($sqlCheckReservation);
+
+                                if ($resultCheckReservation->num_rows > 0) {
+                                    echo "var gioTonTai = '1';";
+                                } 
+                    ?>
+                        // Kiểm tra nếu giờ bắt đầu và số giờ thuê không trống
+                        if (gioDat.trim() !== "" && gioXong.trim() !== "") {    
+                            if ( gioDat24 >= gioMoCua &&  gioDat24 <= gioXong24 && gioXong24 <= gioDongCua) {
+                                if (gioTonTai =='1') {
+                                    
+                                    alert("Giờ đã được đặt trước rồi.");
+                                }else{
+                                    du_lieu.push({ "Ngày đặt": ngayChon, "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Giờ kết thúc": gioXong });
                             capNhatBang();
+                            ngayChonInput.value="";
                             tenSanConInput.value = "";
                             gioDatSan.value = "";
-                            numberInput.value = "";
+                            gioKetThuc.value = "";
+                                }
+                                
+                            } else {
+                                
+                            alert("Giờ đặt phải trể hơn "+gioMoCua+" và sớm hơn "+gioDongCua +".");
+                            }                        
+                            
                         } else {
-                            alert("Vui lòng nhập giờ bắt đầu và số giờ thê.");
+                            alert("Vui lòng nhập giờ bắt đầu và số giờ thuê.");
                         }
+                        
+
                     });
 
                     // Hàm cập nhật bảng
@@ -225,18 +278,21 @@
                             var cell2 = newRow.insertCell(1);
                             var cell3 = newRow.insertCell(2);
                             var cell4 = newRow.insertCell(3);
-                            cell1.innerHTML = row["Sân bóng"];
-                            cell2.innerHTML = row["Giờ bắt đầu"];
-                            cell3.innerHTML = row["Số giờ"];
-                            cell4.innerHTML = '<button onclick="chinhSuaHang(' + index + ')">Chỉnh sửa</button>';
+                            var cell5 = newRow.insertCell(4);
+                            cell1.innerHTML = row["Ngày đặt"];
+                            cell2.innerHTML = row["Sân bóng"];
+                            cell3.innerHTML = row["Giờ bắt đầu"];
+                            cell4.innerHTML = row["Giờ kết thúc"];
+                            cell5.innerHTML = '<button onclick="chinhSuaHang(' + index + ')">Chỉnh sửa</button>';
                         });
                     }
 
                     // Hàm chỉnh sửa hàng
                     function chinhSuaHang(index) {
+                        ngayChonInput.value = du_lieu[index]["Ngày đặt"];
                         tenSanConInput.value = du_lieu[index]["Sân bóng"];
                         gioDatSan.value = du_lieu[index]["Giờ bắt đầu"];
-                        numberInput.value = du_lieu[index]["Số giờ"];
+                        gioKetThuc.value = du_lieu[index]["Giờ kết thúc"];
 
                         // Xóa hàng sau khi chọn để chỉnh sửa
                         du_lieu.splice(index, 1);

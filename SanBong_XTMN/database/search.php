@@ -54,7 +54,7 @@ if ($result->num_rows > 0) {
         // Thêm mã HTML để hiển thị thông tin sân bóng ở đây
         echo '<img class="img_stadium" src="' . $row["hinhAnh"] . '" alt="Hình ảnh sân bóng">';
             echo '<div class="data_stadium">';
-                echo '<b>' . $row["tenSan"] . ' / '. round($row["trungBinhSao"], 1) . '<img src="../image/icons8-star-30.png" alt=""></b>';
+                echo '<b>' . $row["tenSan"] . ' / '. round($row["trungBinhSao"], 1) . '<img id="img_saoSanBong" src="../image/icons8-star-30.png" alt=""></b>';
                 echo '<p><b>Địa chỉ:</b> ' . $row["tenPhuongXa"] . '</p>';
                 echo '<p><b>Mở cửa:</b> ' . $row["thoiGianMoCua"] .' <b>-</b> ' . $row["thoiGianDongCua"] .  '</p>';
                 echo '<p class="money">Giá: ' . $row["mucGia"] . '</p>';                   

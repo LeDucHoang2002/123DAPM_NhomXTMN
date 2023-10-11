@@ -70,7 +70,7 @@ a {
     display: flex;
     justify-content: space-between;
 }
-#tenSanCon,#gioDatSan,#numberInput{
+#tenSanCon,#gioDatSan,#gioKetThuc{
     width: 100px;
 }
 #du-lieu-table,.xacNhanDatSan{
