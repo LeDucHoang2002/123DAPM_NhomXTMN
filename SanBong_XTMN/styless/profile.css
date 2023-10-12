@@ -1,8 +1,12 @@
+.container{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 .profile {
-    width: 100%;
-    display: flex;
+    display: inline !important;
     background: #eee ;
     margin-top: 20px;
+
 }
 
 .ui-w-80 {
@@ -147,3 +151,4 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     .user-info .meta li.activity {
     color: #a2a6af
     }
+

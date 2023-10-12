@@ -31,14 +31,17 @@
                 if (isset($_SESSION["username"])) {
                     // Nếu người dùng đã đăng nhập, hiển thị tên đăng nhập
                     $username = $_SESSION["username"];
-                    echo '<a href="../database/logout.php" class="login">' .
-                        '<img id="img_login" src="../image/icon_user.png" alt="Tài khoản">' .
-                        $username .
-                        '</a>';
+                    echo '<div class="dropdown">
+                            <img id="img_login" src="../image/icon_user.png" alt="Tài khoản">
+                            <b>' . $username . '</b>
+                            <div class="dropdown-content">
+                                <a href="../database/logout.php" class="login">Đăng xuất</a>
+                                <a href="profile.php?tenDangNhap=' . $_SESSION["username"] . '">Trang cá nhân</a>
+                            </div>
+                          </div>';
                 } else {
                     // Nếu người dùng chưa đăng nhập, hiển thị liên kết đăng nhập
-                    echo '<a href="log_in.php" class="login">' .
-                        '<img id="img_login" src="../image/icon_user.png" alt="Đặt sân">ĐĂNG NHẬP</a>';
+                    echo '<a href="log_in.php" class="login"><img id="img_login" src="../image/icon_user.png" alt="Đặt sân">ĐĂNG NHẬP</a>';
                 }
                 ?>
             </div>

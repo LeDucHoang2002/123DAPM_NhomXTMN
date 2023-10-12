@@ -6,15 +6,12 @@ include '../header_footer/header_phu.php';
     <title>Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styless/home.css">
     <link rel="stylesheet" href="../styless/profile.css">
 
 
-<main>
 <div class="profile">
-    <div class="container light-style flex-grow-1 container-p-y">
-        <h4 class="font-weight-bold py-3 mb-4">
-            Account settings
-        </h4>
+    <div class=" container light-style flex-grow-1 container-p-y ">
         <?php
         if (isset($_GET['tenDangNhap'])){
             $tenDangNhap = $_GET['tenDangNhap'];
@@ -213,6 +210,7 @@ include '../header_footer/header_phu.php';
             <button type="button" class="btn btn-default">Cancel</button>
         </div>
     </div>
+    </div>
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -221,8 +219,8 @@ include '../header_footer/header_phu.php';
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script src="../js/profile.js"></script>
-    </div>
-</main>
+    
+
 
 
     <?php

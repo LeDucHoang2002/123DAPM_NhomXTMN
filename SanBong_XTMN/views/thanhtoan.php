@@ -1,45 +1,110 @@
+
 <?php
 include '../header_footer/header_phu.php';
 ?>
 
 <link rel="stylesheet" href="../styless/thanhtoan.css">
-    <main class="thanh toan">
     
+    <main class="thanhtoan">
+        <h3 class="title">THANH TOÁN</h3>
         <div class="thanhtoan_container">
-            <div class="thongtin">
-            <h4 class="title">1. THÔNG TIN THANH TOÁN</h4>
+            <div class="infor">
+                <div class="infor_san">            
             <?php
-// Kiểm tra xem có dữ liệu đã được gửi từ biểu mẫu không
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ trường ẩn
-    $duLieuBang = $_POST["duLieuBang"];
+            // Include file phpMyAdmin.php to establish a database connection.
+            require_once("../database/phpMyAdmin.php");
 
-    // Chuyển dữ liệu từ chuỗi JSON thành mảng PHP
-    $duLieuMang = json_decode($duLieuBang, true);
+            // Check if 'id' is set in the URL.
+            if (isset($_GET['id'])) {
+                $id = $_GET['id']; // Get the 'id' value from the URL
+                
+                // Check if the request method is POST.
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Handle POST data
+                    if (isset($_POST['duLieuBang'])) {
+                        $duLieuBang = json_decode($_POST['duLieuBang'], true);
 
-    // Bạn có thể truy cập và xử lý $duLieuMang ở đây
-    // Ví dụ: Hiển thị thông tin từ bảng
-    echo "<h4>Thông Tin Đặt Sân</h4>";
-    echo "<table border='1'>";
-    echo "<tr><th>Ngày đặt</th><th>Sân bóng</th><th>Giờ bắt đầu</th><th>Giờ kết thúc</th></tr>";
-    foreach ($duLieuMang as $hang) {
-        echo "<tr>";
-        echo "<td>" . $hang["Ngày đặt"] . "</td>";
-        echo "<td>" . $hang["Sân bóng"] . "</td>";
-        echo "<td>" . $hang["Giờ bắt đầu"] . "</td>";
-        echo "<td>" . $hang["Giờ kết thúc"] . "</td>";
-        echo "</tr>";
-    }
-    echo "</table>";
-} else {
-    // Nếu không có dữ liệu gửi đến, bạn có thể xử lý điều này hoặc hiển thị thông báo lỗi
-    echo "Không có dữ liệu đặt sân được gửi đến.";
-}
-?>
-            </div>
+                        // Create a variable to check if the header has been displayed.
+                        $headerDisplayed = false;
+                        $totalAmount = 0;
+                        foreach ($duLieuBang as $datSan) {
+                            $ngayDat = $datSan["Ngày đặt"];
+                            $tenSanCon = $datSan["Sân bóng"];
+                            $gioBatDau = $datSan["Giờ bắt đầu"];
+                            $gioKetThuc = $datSan["Giờ kết thúc"];
+
+                            // Query the database to get information about the chosen pitch (sân con) and its price.
+                            $sql = "SELECT sc.loaiSan, sc.gia, sb.tenSan
+                            FROM SanBong sb
+                            INNER JOIN SanCon sc ON sb.IDsanBong = sc.IDsanBong
+                            WHERE sb.IDsanBong = $id";
+
+                            $result = $conn->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                $loaiSan = $row["loaiSan"];
+                                $donGia = $row["gia"];
+                                $tensan =$row["tenSan"];
+
+                                if (!$headerDisplayed) {
+                                    // Display the header only once.
+                                    echo "<b>$tensan</b>";
+                                    echo"<div class='div_table'> ";
+                                    echo "<table border='1'>";
+                                    echo "<tr><th>Ngày đặt</th><th>Sân bóng</th><th>Loại sân</th><th>Giờ bắt đầu</th><th>Giờ kết thúc</th><th>Số giờ thuê</th><th>Đơn giá sân con</th><th>Thành tiền</th></tr>";
+                                    echo "</div>";
+                                    $headerDisplayed = true;
+                                }
+
+                                $soGioThue = strtotime($gioKetThuc) - strtotime($gioBatDau);
+                                $soGioThue = $soGioThue / 3600;
+                                $thanhTien = $soGioThue * $donGia;
+
+                                echo "<tr>";
+                                echo "<td>$ngayDat</td>";
+                                echo "<td>$tenSanCon</td>";
+                                echo "<td>$loaiSan</td>";
+                                echo "<td>$gioBatDau</td>";
+                                echo "<td>$gioKetThuc</td>";
+                                echo "<td>$soGioThue giờ</td>";
+                                echo "<td>$donGia</td>";
+                                echo "<td>$thanhTien</td>";
+                                echo "</tr>";
+                                
+                            } else {
+                                echo "Không tìm thấy thông tin sân con.";
+                            }
+                            $totalAmount += $thanhTien;
+                        }
+
+                        echo "</table>";                        
+                        $conn->close();
+                    }
+                }
+            } else {
+                echo "Không có ID được truyền vào trang thanh toán.";
+            }
+
+            ?>
+                    
+                </div>
+                <div class="enter_infor">
+                    <div class="loinhan">
+                        <h4>Lời nhắn</h4>
+                        <input type="text">
+                    </div>
+
+                    <div class="code">
+                        <h4>Nhập mã giảm giá (nếu có)</h4>
+                        <input type="text">
+                        <button>Áp dụng</button>
+                    </div>
+                </div>
+            </div>      
             <div class="hinhthuc">
                 <div class="hinhthucthanhtoan">
-                    <h4 class="title">2. HÌNH THỨC THANH TOÁN</h4>
+                    <h4 class="title">HÌNH THỨC THANH TOÁN</h4>
                     <div class="option_hinhthuc">
                         <div class="option">
                             <input name="hinhthuc" type="radio"/> Thanh toán tất cả
@@ -51,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                 </div>
                 <div class="phuongthucthanhtoan">
-                    <h4 class="title">3.PHƯƠNG THỨC THANH TOÁN</h4>
+                    <h4 class="title">PHƯƠNG THỨC THANH TOÁN</h4>
                     <div class="option_phuongthuc">
                         <div class="option">
                             <input name="phuongthuc" type="radio"/> Chuyển khoản ngân hàng 
@@ -66,8 +131,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                     </div>
-                </div>
+
+                </div>                
             </div>
+            <div class="thanhtien">
+                    <div class="thanhtien-container">
+                        <div class="info">
+                            <p class="title">Tổng tiền sân</p>
+                            <p class="prince"><?php echo $totalAmount . " VNĐ"; ?></p>
+                        </div>
+                        <div class="info">
+                            <p class="title">Tổng voucher giảm giá</p>
+                            <p class="prince">200</p>
+                        </div>
+                        <div class="info">
+                            <p class="title">Tổng thanh toán 20%</p>
+                            <p class="prince" style="color:red;">800</p>
+                        </div>
+                        <div class="info">
+                            <p class="title">Còn nợ</p>
+                            <p class="prince" style="color:#c7c722;">200</p>
+                        </div>
+                    </div>
+            </div>           
         </div>
         <div class="btn_thanhtoan">
             <button>THANH TOÁN</button>
@@ -75,6 +161,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </main>
     
-    <?php
+<?php
 include '../header_footer/footer.php';
 ?>

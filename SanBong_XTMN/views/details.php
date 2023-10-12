@@ -83,7 +83,7 @@ include '../header_footer/header_phu.php';
                         // Nếu người dùng chưa đăng nhập, chuyển hướng tới trang đăng nhập
                         echo "<a href='log_in.php'><button>Đặt sân</button></a>";
                     }                    
-                    echo "<button id='exit-booking-form'>Hủy đặt</button>";
+                    echo "<button id='exit-booking-form'>Hủy</button>";
                 echo "</div>";   
                 ?>
                 <div class="booking-form-container">
@@ -128,21 +128,31 @@ include '../header_footer/header_phu.php';
                     </table>
                     <div class="xacNhanDatSan">
                         <!-- Nút để chuyển dữ liệu sang trang thanhtoan.php -->
-                        <form method="POST" action="thanhtoan.php">
+                        <?php
+                        $id = $_GET['id']; // Thay đổi giá trị này thành giá trị thực tế của id
+                        ?>
+
+                        <form method="POST" action="thanhtoan.php?id=<?php echo $id; ?>">
                             <input type="hidden" name="duLieuBang" id="duLieuBangInput">
-                            <button type="submit" id="xacNhanDatSan">Đặt Sân</button>
+                            <button type="submit" id="xacNhanDatSan">Đặt Sân</button>
                         </form>
+
                     </div>
                     <script>
                         // ...
-                        var xacNhanDatSanButton = document.getElementById("xacNhanDatSan");
-
                         // Sự kiện khi nhấn nút "Đặt Sân"
-                        xacNhanDatSanButton.addEventListener("click", function() {
-                            // Chuyển dữ liệu từ bảng sang trường ẩn
+                    document.getElementById("xacNhanDatSan").addEventListener("click", function() {
+                        if (du_lieu.length > 0) {
+                            // Có dữ liệu trong mảng, gửi dữ liệu đó đến trang thanh toán
                             var duLieuBangInput = document.getElementById("duLieuBangInput");
                             duLieuBangInput.value = JSON.stringify(du_lieu);
-                        });
+                        } else {
+                            // Không có dữ liệu trong mảng, không thực hiện hành động gì
+                            event.preventDefault(); // Ngăn chặn việc gửi form
+                            alert("Không có dữ liệu để đặt sân.");
+                        }
+                    });
+
                     </script>
     
                     <script>
@@ -157,7 +167,7 @@ include '../header_footer/header_phu.php';
                     var gioKetThuc = document.getElementById("gioKetThuc");
                     var themButton = document.getElementById("them-button");
                     var duLieuTable = document.getElementById("du-lieu-table");
-
+                    
                     // Sự kiện khi nhấn nút "Thêm"
                     themButton.addEventListener("click", function() {
                         var ngayChon = ngayChonInput.value;
@@ -183,20 +193,48 @@ include '../header_footer/header_phu.php';
                         } 
                         ?>
                         // Kiểm tra nếu giờ bắt đầu và số giờ thuê không trống
-                        if (gioDat.trim() !== "" && gioXong.trim() !== "") {
+                        if (ngayChon.trim() !== ""&&tenSanCon.trim() !== ""&&gioDat.trim() !== "" && gioXong.trim() !== "") {
                             if ( gioDat24 >= gioMoCua &&  gioDat24 <= gioXong24 && gioXong24 <= gioDongCua) {
                                 if (gioDat24==gioXong24) {
                                     
-                                    alert("Giờ đã được và giờ kết thúc trùng nhau.");
+                                    alert("Không được để trống thông tin.");
                                 }else{
-                                    var gioDaTonTai = kiemTraGioTonTai('2023-10-13','Sân Số 1','08:00', "10:00");
+                                    // Kiểm tra nếu ngày đặt và tên sân con trùng với bất kỳ bản ghi nào trong mảng
+                                    var trungLich = du_lieu.some(function(row) {
+                                        return row["Ngày đặt"] === ngayChon && row["Sân bóng"] === tenSanCon;
+                                    });
 
-                                    if (gioDaTonTai) {
-                                        alert("Giờ đã được đặt trước đó.");
+                                    if (trungLich) {
+                                        // Nếu trùng ngày và tên sân con, kiểm tra giờ bắt đầu và giờ kết thúc
+                                        var trungGio = du_lieu.some(function(row) {
+                                            var gioBatDauDaDat = row["Giờ bắt đầu"];
+                                            var gioKetThucDaDat = row["Giờ kết thúc"];
+
+                                            if (
+                                                (gioBatDauDaDat<gioDat24 && gioDat24 < gioKetThucDaDat) ||
+                                                (gioBatDauDaDat<gioXong24 && gioXong24 < gioKetThucDaDat)||
+                                                (gioDat24<gioBatDauDaDat && gioKetThucDaDat<gioXong24)
+                                            ) {
+                                                return true;
+                                            }
+                                        });
+
+                                        if (trungGio) {
+                                            alert("Trùng lịch cho ngày "+ngayChon +", "+tenSanCon+".");
+                                        } else {
+                                            // Thêm dữ liệu vào mảng và cập nhật bảng
+                                            du_lieu.push({ "Ngày đặt": ngayChon, "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Giờ kết thúc": gioXong });
+                                            capNhatBang();
+                                            ngayChonInput.value = "";
+                                            tenSanConInput.value = "";
+                                            gioDatSan.value = "";
+                                            gioKetThuc.value = "";
+                                        }
                                     } else {
+                                        // Nếu không trùng ngày và tên sân con, thêm dữ liệu vào mảng và cập nhật bảng
                                         du_lieu.push({ "Ngày đặt": ngayChon, "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Giờ kết thúc": gioXong });
                                         capNhatBang();
-                                        ngayChonInput.value="";
+                                        ngayChonInput.value = "";
                                         tenSanConInput.value = "";
                                         gioDatSan.value = "";
                                         gioKetThuc.value = "";

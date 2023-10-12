@@ -3,8 +3,8 @@ include '../header_footer/header.php';
 ?>
     
     <main class="trangchu">
-        
-    <h2>Sân Bóng Đà Nẵng</h2>
+      <div class="h2"><h2 >Danh sách sân bóng</h2></div>  
+    
         <div class="trangchu_main">
             <div id="searchResults" class="search-results">
         <!-- Kết quả tìm kiếm sẽ được hiển thị ở đây -->

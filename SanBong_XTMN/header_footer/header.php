@@ -13,7 +13,8 @@
     <header class="header">
         
         <div class="group_menu">
-            <img id="img_logo" src="../image/logoXTMN.png" alt="logo"></img>
+            
+            <img id="img_logo" src="../image/logoXTMN.png" alt="logo" ></img>
             <div class="menu">
                 <nav >
                     <ul>
@@ -28,17 +29,19 @@
             <?php
             session_start();
             if (isset($_SESSION["username"])) {
-                
                 // Nếu người dùng đã đăng nhập, hiển thị tên đăng nhập
                 $username = $_SESSION["username"];
-                echo '<a href="profile.php?tenDangNhap=' . $_SESSION["username"] . '" class="login">' .
-                    '<img id="img_login" src="../image/icon_user.png" alt="Tài khoản">' .
-                    $username .
-                    '</a>';
+                echo '<div class="dropdown">
+                        <img id="img_login" src="../image/icon_user.png" alt="Tài khoản">
+                        <b>' . $username . '</b>
+                        <div class="dropdown-content">
+                            <a href="../database/logout.php" class="login">Đăng xuất</a>
+                            <a href="profile.php?tenDangNhap=' . $_SESSION["username"] . '">Trang cá nhân</a>
+                        </div>
+                      </div>';
             } else {
                 // Nếu người dùng chưa đăng nhập, hiển thị liên kết đăng nhập
-                echo '<a href="log_in.php" class="login">' .
-                    '<img id="img_login" src="../image/icon_user.png" alt="Đặt sân">ĐĂNG NHẬP</a>';
+                echo '<a href="log_in.php" class="login"><img id="img_login" src="../image/icon_user.png" alt="Đặt sân">ĐĂNG NHẬP</a>';
             }
             ?>
             </div>
@@ -51,11 +54,10 @@
             $queryDistricts = "SELECT * FROM QuanHuyen";
             $resultDistricts = $conn->query($queryDistricts);
         ?>
-        <div class="container">
+        <div class="container-header">
             <div class="search-container">
                 <!-- Combobox cho Quận/Huyện -->
                 <div class="input-container">
-                    <label for="district">Quận/Huyện:</label>
                     <select id="district" name="district">
                         <option value="">Chọn Quận/Huyện</option>
                         <?php
@@ -68,18 +70,16 @@
                 </div>
                 
                 <div class="input-container">
-                    <label for="ward">Phường/Xã:</label>
                     <select id="ward" name="ward">
                         <option value="">Chọn Phường/Xã</option>
                     </select>
                 </div>
                                 
                 <div class="input-container">
-                    <label for="search">Tìm kiếm:</label>
                     <input type="text" id="search" name="search" placeholder="Nhập thông tin tìm kiếm...">
                 </div>
                 <div >
-                <button class="button_timkiem"onclick="performSearch()"><img id="img_search" src="../image/icons_search.png" alt="#"></button>
+                    <button class="button_timkiem"onclick="performSearch()"><img id="img_search" src="../image/icons_search.png" alt="#"></button>
                 </div>
                 
             </div>
