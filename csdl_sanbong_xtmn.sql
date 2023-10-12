@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS SanBong (
     moTa VARCHAR(200) NULL,
     dinhVi VARCHAR(200) NULL,
     viTri VARCHAR(200) NOT NULL,
-    thoiGianMoCua VARCHAR(200) NOT NULL,
-    thoiGianDongCua VARCHAR(200) NOT NULL,
+    thoiGianMoCua TIME NOT NULL,
+    thoiGianDongCua TIME NOT NULL,
     mucGia VARCHAR(200) NULL,
     CONSTRAINT FK_SB_CSB FOREIGN KEY (tenDangNhap) REFERENCES TaiKhoan(tenDangNhap),
     CONSTRAINT FK_SB_PX FOREIGN KEY (IDphuongXa) REFERENCES PhuongXa(IDphuongXa)
@@ -122,9 +122,9 @@ CREATE TABLE IF NOT EXISTS PhieuDatSan (
 CREATE TABLE IF NOT EXISTS ChiTietDatSan (
     IDphieuDatSan INT NOT NULL,
     IDsanCon INT NOT NULL,
-    gioBatDau VARCHAR(30) NULL,
-    gioKetThuc VARCHAR(30) NULL,
-    ngayDat VARCHAR(30) NULL,
+    gioBatDau TIME NULL,
+    gioKetThuc TIME NULL,
+    ngayDat DATETIME NULL,
     ghiChu VARCHAR(200) NULL,
     thanhTien DECIMAL(10, 2) NULL,
     PRIMARY KEY (IDphieuDatSan, IDsanCon),
@@ -180,11 +180,11 @@ VALUES (N'Phường Khuê Trung', 6), (N'Phường Hòa An', 6), (N'Phường H�
 -- Thêm dữ liệu vào bảng SanBong
 INSERT INTO SanBong (tenSan, tenDangNhap, IDphuongXa, hinhAnh, moTa, dinhVi, viTri, thoiGianMoCua, thoiGianDongCua, mucGia)
 VALUES
-    (N'Sân Bóng ABC', 'nguyenvanA', 1, '../image/img_header.jpg', N'Sân bóng 1', N'Sân bóng 1', N'Địa chỉ 1', '08:00 AM', '10:00 PM', '200,000 VND'),
-    (N'Sân Bóng XYZ', 'nguyenvanB', 2, 'https://foba.vn/wp-content/uploads/2020/09/Hinh-anh-%E2%80%93-2020-San-Bong-Cu-Chi-Sau-01-Nam-Khai-Thac-1.jpg', N'Sân bóng 2', N'Sân bóng 2', N'Địa chỉ 2', '07:00 AM', '11:00 PM', '250,000 VND'),
-    (N'Sân Bóng XTMN', 'nguyenvanC', 3, 'https://chieusangngoaitroi.com/wp-content/uploads/2019/07/Den-chieu-sang-khong-the-thieu-tren-san-bong.jpg', N'Sân bóng 3', N'Sân bóng 3', N'Địa chỉ 3', '09:00 AM', '09:00 PM', '180,000 VND'),
-	(N'Sân Bóng HL', 'nguyenvanB', 2, 'http://daithanhgroups.com/upload/images/kinh-doanh(1).jpg', N'Sân bóng 2', N'Sân bóng 2', N'Địa chỉ 2', '07:00 AM', '11:00 PM', '250,000 VND'),
-    (N'Sân Bóng HIT', 'nguyenvanC', 3, 'https://toplist.vn/images/800px/san-bong-tri-hai-khu-the-thao-an-phu-619025.jpg', N'Sân bóng 3', N'Sân bóng 3', N'Địa chỉ 3', '09:00 AM', '09:00 PM', '180,000 VND');
+    (N'Sân Bóng ABC', 'nguyenvanA', 1, '../image/img_header.jpg', N'Sân bóng 1', N'Sân bóng 1', N'Địa chỉ 1', '08:00 AM', '22:00 PM', '200,000 VND'),
+    (N'Sân Bóng XYZ', 'nguyenvanB', 2, 'https://foba.vn/wp-content/uploads/2020/09/Hinh-anh-%E2%80%93-2020-San-Bong-Cu-Chi-Sau-01-Nam-Khai-Thac-1.jpg', N'Sân bóng 2', N'Sân bóng 2', N'Địa chỉ 2', '07:00 AM', '22:00 PM', '250,000 VND'),
+    (N'Sân Bóng XTMN', 'nguyenvanC', 3, 'https://chieusangngoaitroi.com/wp-content/uploads/2019/07/Den-chieu-sang-khong-the-thieu-tren-san-bong.jpg', N'Sân bóng 3', N'Sân bóng 3', N'Địa chỉ 3', '09:00 AM', '23:00 PM', '180,000 VND'),
+	(N'Sân Bóng HL', 'nguyenvanB', 2, 'http://daithanhgroups.com/upload/images/kinh-doanh(1).jpg', N'Sân bóng 2', N'Sân bóng 2', N'Địa chỉ 2', '07:00 AM', '22:00 PM', '250,000 VND'),
+    (N'Sân Bóng HIT', 'nguyenvanC', 3, 'https://toplist.vn/images/800px/san-bong-tri-hai-khu-the-thao-an-phu-619025.jpg', N'Sân bóng 3', N'Sân bóng 3', N'Địa chỉ 3', '09:00 AM', '23:00 PM', '180,000 VND');
 
 -- Thêm dữ liệu vào bảng SanCon
 INSERT INTO SanCon (IDsanBong, tenSanCon, loaiSan, tinhTrang, gia, soLuongSao, moTa)
@@ -219,7 +219,7 @@ VALUES
 -- Thêm dữ liệu vào bảng ChiTietDatSan
 INSERT INTO ChiTietDatSan (IDphieuDatSan, IDsanCon, gioBatDau, gioKetThuc, ngayDat, ghiChu, thanhTien)
 VALUES
-    (1, 1, '09:00 AM', '10:00 AM', '2023-10-10', N'Chơi 7 người', 150000),
-    (1, 2, '04:00 PM', '05:00 PM', '2023-10-10', N'Chơi 5 người', 120000),
+    (1, 1, '09:00 AM', '10:00 AM', '2023-10-13', N'Chơi 7 người', 150000),
+    (1, 2, '16:00 PM', '17:00 PM', '2023-10-13', N'Chơi 5 người', 120000),
     (2, 3, '08:00 AM', '09:00 AM', '2023-10-13', N'Chơi 7 người', 170000),
-    (3, 1, '07:00 AM', '08:00 AM', '2023-10-10', N'Chơi 5 người', 140000);
+    (3, 1, '07:00 AM', '08:00 AM', '2023-10-13', N'Chơi 5 người', 140000);

@@ -1,49 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="../styless/details.css">  
-    <link rel="stylesheet" href="../styless/home.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">      
-    <link rel="shortcut icon" href="../image/logoXTMN.png" type="image/x-icon">
-    <title>Sân Bóng Đá Đà Nẵng</title>
-    
-</head>
-<body>
-    <header class="header_details">
-        <div class="group_menu">
-            <div class="img_logo">
-                <img id="img_log0" src="../image/logoXTMN.png" alt="logo">
-            </div>
-            <div class="menu">
-                <nav>
-                    <ul>
-                        <li><a href="home_page.php">TRANG CHỦ</a></li>
-                        <li><a id="details" href="details.php">ĐẶT SÂN</a></li>
-                        <li><a href="#">TÌM KÈO</a></li>
-                        <li><a href="#">LIÊN HỆ</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="login-link">
-            <?php
-                session_start();
-                if (isset($_SESSION["username"])) {
-                    // Nếu người dùng đã đăng nhập, hiển thị tên đăng nhập
-                    $username = $_SESSION["username"];
-                    echo '<a href="../database/logout.php" class="login">' .
-                        '<img id="img_login" src="../image/icon_user.png" alt="Tài khoản">' .
-                        $username .
-                        '</a>';
-                } else {
-                    // Nếu người dùng chưa đăng nhập, hiển thị liên kết đăng nhập
-                    echo '<a href="log_in.php" class="login">' .
-                        '<img id="img_login" src="../image/icon_user.png" alt="Đặt sân">ĐĂNG NHẬP</a>';
-                }
-                ?>
-            </div>
-        </div>
-    </header>
+<?php
+include '../header_footer/header_phu.php';
+?>
     
     <main class="trangchu">
             
@@ -132,7 +89,7 @@
                 <div class="booking-form-container">
                     <div class="thongTinDatSan">
                         <!-- Form để nhập dữ liệu -->
-                        <form method="post" action="thanhtoan.php">
+                        <form method="POST" action="thanhtoan.php">
                             <h4>Thông Tin Đặt Sân</h4>
                             <b for="gioDatSan"> Ngày đặt sân:</b>
                             <input type="date" id="ngayChon" min="<?php echo date('Y-m-d'); ?>">
@@ -171,7 +128,7 @@
                     </table>
                     <div class="xacNhanDatSan">
                         <!-- Nút để chuyển dữ liệu sang trang thanhtoan.php -->
-                        <form method="post" action="thanhtoan.php">
+                        <form method="POST" action="thanhtoan.php">
                             <input type="hidden" name="duLieuBang" id="duLieuBangInput">
                             <button type="submit" id="xacNhanDatSan">Đặt Sân</button>
                         </form>
@@ -207,10 +164,10 @@
                         var tenSanCon = tenSanConInput.value;
                         var gioDat = gioDatSan.value;
                         var gioXong = gioKetThuc.value;
-                        
-                    // Chuyển đổi số giờ thành chuỗi kiểu giờ 24 giờ
-                    var gioDat24 = gioDat.toString().padStart(2, '0') + ":00";
-                    var gioXong24 = gioXong.toString().padStart(2, '0') + ":00";
+
+                        // Chuyển đổi số giờ thành chuỗi kiểu giờ 24 giờ
+                        var gioDat24 = gioDat.toString().padStart(2, '0') + ":00";
+                        var gioXong24 = gioXong.toString().padStart(2, '0') + ":00";
                         <?php
                         
                         // Truy vấn dữ liệu từ bảng SanBong để hiển thị trong combobox
@@ -224,48 +181,63 @@
                             echo "var gioMoCua = '" . $gioMoCua . "';";
                             echo "var gioDongCua = '" . $gioDongCua . "';";
                         } 
-                        $sqlCheckReservation = "SELECT chitietdatsan.* FROM chitietdatsan
-                                    JOIN sancon ON chitietdatsan.IDsanCon = sancon.IDsanCon
-                                    JOIN sanbong ON sancon.IDsanBong = sanbong.IDsanBong
-                                    WHERE sanbong.IDsanBong = $id
-                                    AND sancon.tenSanCon='Sân Số 1'
-                                    AND (
-                                    (gioBatDau < '08;00' AND '08:00' < gioKetThuc)
-                                    OR (gioBatDau < '10:00' AND '10:00' < gioKetThuc)
-                                    )";
-                                
-                                $resultCheckReservation = $conn->query($sqlCheckReservation);
-
-                                if ($resultCheckReservation->num_rows > 0) {
-                                    echo "var gioTonTai = '1';";
-                                } 
-                    ?>
+                        ?>
                         // Kiểm tra nếu giờ bắt đầu và số giờ thuê không trống
-                        if (gioDat.trim() !== "" && gioXong.trim() !== "") {    
+                        if (gioDat.trim() !== "" && gioXong.trim() !== "") {
                             if ( gioDat24 >= gioMoCua &&  gioDat24 <= gioXong24 && gioXong24 <= gioDongCua) {
-                                if (gioTonTai =='1') {
+                                if (gioDat24==gioXong24) {
                                     
-                                    alert("Giờ đã được đặt trước rồi.");
+                                    alert("Giờ đã được và giờ kết thúc trùng nhau.");
                                 }else{
-                                    du_lieu.push({ "Ngày đặt": ngayChon, "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Giờ kết thúc": gioXong });
-                            capNhatBang();
-                            ngayChonInput.value="";
-                            tenSanConInput.value = "";
-                            gioDatSan.value = "";
-                            gioKetThuc.value = "";
+                                    var gioDaTonTai = kiemTraGioTonTai('2023-10-13','Sân Số 1','08:00', "10:00");
+
+                                    if (gioDaTonTai) {
+                                        alert("Giờ đã được đặt trước đó.");
+                                    } else {
+                                        du_lieu.push({ "Ngày đặt": ngayChon, "Sân bóng": tenSanCon, "Giờ bắt đầu": gioDat, "Giờ kết thúc": gioXong });
+                                        capNhatBang();
+                                        ngayChonInput.value="";
+                                        tenSanConInput.value = "";
+                                        gioDatSan.value = "";
+                                        gioKetThuc.value = "";
+                                    }
                                 }
-                                
-                            } else {
-                                
-                            alert("Giờ đặt phải trể hơn "+gioMoCua+" và sớm hơn "+gioDongCua +".");
-                            }                        
                             
+                            }else {                                
+                                alert("Giờ đặt phải trể hơn "+gioMoCua+" và sớm hơn "+gioDongCua +".");
+                                }   
                         } else {
                             alert("Vui lòng nhập giờ bắt đầu và số giờ thuê.");
                         }
-                        
-
                     });
+
+                    function kiemTraGioTonTai(ngayChon, tenSanCon, gioBatDau, gioKetThuc) {
+                    var xhr = new XMLHttpRequest();
+                    var url = "../database/kiem_tra_gio.php"; // Thay đổi thành tên tệp PHP xử lý kiểm tra giờ
+
+                    // Đảm bảo sử dụng dấu & để ngăn cách các tham số và sử dụng "=" để gán giá trị.
+                    var params = "ngayChon=" + ngayChon + "&tenSanCon=" + tenSanCon + "&gioBatDau=" + gioBatDau + "&gioKetThuc=" + gioKetThuc;
+
+                    xhr.open("POST", url, true);
+
+                    // Gửi yêu cầu với dữ liệu thông qua phương thức POST
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = xhr.responseText;
+                            if (response === "true") {
+                                // Giờ đã tồn tại
+                                return true;
+                            } else {
+                                // Giờ chưa tồn tại
+                                return false;
+                            }
+                        }
+                    }
+
+                    xhr.send(params);
+                }
 
                     // Hàm cập nhật bảng
                     function capNhatBang() {
@@ -485,29 +457,6 @@
         }
         ?>
     </main>
-    
-    <footer>
-        <div class="footer_">
-            <div class="footer_left">
-                <img id="logo_footer" src="../image/logoXTMN.png" alt="logo"></img>
-                <p><b>HOTLINE :</b> 035 305 7899</p>
-                <p><b>FACEBOOK :</b> facebook.com/Đặt sân bóng đá Đà Nẵng </p>
-            </div>
-            <div class="footer_center">
-                <p><b>CHÍNH SÁCH</b></p>
-                <p>Chính sách bảo mật</p>
-                <p>Chính sách đặt sân và thanh toán </p>
-                <p>Cam kết chất lượng </p>
-            </div>
-            <div class="footer_right">
-                <p><b>HÒM THƯ GÓP Ý</b></p>
-                <input type="text" id="text" name="search" placeholder="Nhập thông tin góp ý">                
-                <button id="send">Gửi</button>
-            </div>
-        </div>       
-        <div class="license">
-            <h3>© Bản quyền thuộc TEAM XTMN </h3>
-        </div> 
-    </footer>
-</body>
-</html>
+    <?php
+include '../header_footer/footer.php';
+?>
